@@ -12,7 +12,7 @@ const tours = JSON.parse(
 
 app.use(express.json());
 
-app.get("/api/v1/tours", (req, res) => {
+ const getAllTours = (req, res) => {
   res.status(200).json({
     status: "succses",
     results: tours.length,
@@ -20,9 +20,33 @@ app.get("/api/v1/tours", (req, res) => {
       tours: tours,
     },
   });
-});
+};
 
-app.post("/api/v1/tours", (req, res) => {
+const getTour = (req, res) => {
+  console.log(req.params);
+  const id =req.params.id * 1 ;
+
+  const tour = tours.find(el => el.id === id);
+
+  if (!tour) {
+    return  res.status(404).json({
+    status: "faild",
+    message:'Invali id'
+  });
+  }
+
+  res.status(200).json({
+    status: "succses",
+    results: tours.length,
+    data: {
+      tour
+    },
+  });
+};
+
+
+
+const createTour = (req, res) => {
   console.log(req.body);
   
 const newId = tours[tours.length-1].id+1;
@@ -43,9 +67,9 @@ const newId = tours[tours.length-1].id+1;
       });
     }
   );
-});
+};
 
-app.patch("/app/v1/tours/:id",(req,res)=>{
+const updateTour = (req,res) =>{
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
       status:'fail',
@@ -59,7 +83,73 @@ app.patch("/app/v1/tours/:id",(req,res)=>{
       tour:'<Updated tour here>'
     }
   })
-})
+}
+
+const deleteTour = (req,res)=>{
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status:'fail',
+      message:'Invalid id'
+    })
+  }
+
+  res.status(204).json({
+    status:'succses',
+    data:null
+  })
+}
+
+const getAllUsers = (req,res) => {
+  res.status(500).json({
+    status:"error",
+    message:"this rote is not defined!"
+  })
+}
+
+const getUser = (req,res) => {
+  res.status(500).json({
+    status:"error",
+    message:"this rote is not defined!"
+  })
+}
+
+const createUsers = (req,res) => {
+  res.status(500).json({
+    status:"error",
+    message:"this rote is not defined!"
+  })
+}
+
+const updateUser = (req,res) => {
+  res.status(500).json({
+    status:"error",
+    message:"this rote is not defined!"
+  })
+}
+
+const deleteUsers = (req,res) => {
+  res.status(500).json({
+    status:"error",
+    message:"this rote is not defined!"
+  })
+}
+
+// Mouting the router
+
+const tourRouter = express.Router();
+const userRouter = express.Router();
+
+app.use('/api/v1/tours', tourRouter);
+
+app.use('/api/v1/users', userRouter)
+
+tourRouter.route('/').get(getAllTours).post(createTour);
+
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+userRouter.route('/').get(getAllUsers).post(createUsers);
+
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUsers);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}...`);
