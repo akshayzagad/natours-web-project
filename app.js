@@ -2,11 +2,18 @@ const { log } = require("console");
 const express = require("express");
 const fs = require("fs");
 
+const tourRouter = require('./routes/toursRoutes');
+const morgan = require("morgan");
+
 const app = express();
 
-const tourRouter = require('./routes/toursRoutes')
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 app.use(express.json());
+
+app.use(express.static(`${__dirname}/public`));
 
 const getAllUsers = (req,res) => {
   res.status(500).json({
