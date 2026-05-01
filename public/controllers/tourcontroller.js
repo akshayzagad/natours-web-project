@@ -1,10 +1,11 @@
 // const Tour = require("./../models/tourModel");
 const qs = require("qs");
 const fs = require("fs");
+const tour = require('../../models/tourModel')
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../../dev-data/data/tours-simple.json`),
-);
+// const tours = JSON.parse(
+//   fs.readFileSync(`${__dirname}/../../dev-data/data/tours-simple.json`),
+// );
 
 exports.checkId = (req,res,next,val) =>{
   console.log(`Tour id is:${val}`);
