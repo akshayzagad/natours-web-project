@@ -29,24 +29,20 @@ const Tour = require("../../models/tourModel");
 //   next();
 // }
 
-exports.aliasTopTour = (req, res, next) => {
-  req.aliasParams = {
-    limit: "5",
-    sort: "ratingsAverage,price",
-    fields: "name,price,ratingsAverage,summary,difficulty"
-  };
-  next();
-};
-
-exports.getAllTours = async (req, res) => {
-  try {
-    //Build Query
+class APIFeatures {
+  constructor(query, queryString, aliasParams) {
+    this.query = query;
+    this.queryString = queryString;
+    this.aliasParams = aliasParams;
+  }
+  //Build Query
+  filter() {
     // 1 A}Filltering
     let queryObj;
-    if (req.aliasParams) {
-      queryObj = { ...req.aliasParams };
+    if (this.aliasParams) {
+      queryObj = { ...this.aliasParams };
     } else {
-      queryObj = qs.parse(req.query);
+      queryObj = qs.parse(this.queryString);
     }
 
     const excludedFields = ["page", "sort", "limit", "fields"];
@@ -56,40 +52,65 @@ exports.getAllTours = async (req, res) => {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    let query = Tour.find(JSON.parse(queryStr));
+    // let query = Tour.find(JSON.parse(queryStr));
+    this.query.find(JSON.parse(queryStr));
 
+    return this;
+  }
+
+  sort() {
     // 2}Sorting
-    const sortVal = req.aliasParams?.sort || req.query.sort;
+    const sortVal = this.aliasParams?.sort || this.queryString.sort;
     if (sortVal) {
       const sortBy = sortVal.split(",").join(" ");
-      query = query.sort(sortBy);
+      this.query = this.query.sort(sortBy);
     } else {
-      query = query.sort("-createdAt");
+      this.query = this.query.sort("-createdAt");
     }
+    return this;
+  }
 
+  limitFields() {
     //3} Fields
-    const fieldsVal = req.aliasParams?.fields || req.query.fields;
+    const fieldsVal = this.aliasParams?.fields || this.queryString.fields;
     if (fieldsVal) {
       const fields = fieldsVal.split(",").join(" ");
-      query = query.select(fields);
+      this.query = this.query.select(fields);
     } else {
-      query = query.select("-__v");
+      this.query = this.query.select("-__v");
     }
+    return this;
+  }
 
+  pagination() {
     //3} Pagination
-    const limitVal = req.aliasParams?.limit || req.query.limit;
-    const pageVal = req.aliasParams?.page || req.query.page;
+    const limitVal = this.aliasParams?.limit || this.queryString.limit;
+    const pageVal = this.aliasParams?.page || this.queryString.page;
     const page = pageVal * 1 || 1;
     const limit = limitVal * 1 || 100;
     const skip = (page - 1) * limit;
 
-    query = query.skip(skip).limit(limit);
+    this.query = this.query.skip(skip).limit(limit);
 
-    if (pageVal) {
-      const numTours = await Tour.countDocuments();
-      if (skip >= numTours) throw new error("This page does not exit");
-    }
+    // if (pageVal) {
+    //   const numTours = await Tour.countDocuments();
+    //   if (skip >= numTours) throw new error("This page does not exit");
+    // }
+    return this;
+  }
+}
 
+exports.aliasTopTour = (req, res, next) => {
+  req.aliasParams = {
+    limit: "5",
+    sort: "ratingsAverage,price",
+    fields: "name,price,ratingsAverage,summary,difficulty",
+  };
+  next();
+};
+
+exports.getAllTours = async (req, res) => {
+  try {
     /**
      * {
         difficulty: 'easy',
@@ -101,7 +122,13 @@ exports.getAllTours = async (req, res) => {
      */
 
     //Excecute Query
-    const tours = await query;
+
+    const features = new APIFeatures(Tour.find(), req.query, req.aliasParams)
+      .filter()
+      .sort()
+      .limitFields()
+      .pagination();
+    const tours = await features.query;
 
     res.status(200).json({
       status: "success",
