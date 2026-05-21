@@ -1,5 +1,5 @@
 
-const tourController = require("./../public/controllers/tourcontroller");
+const tourController = require("../controllers/tourcontroller");
 
 // Middleware
 const express = require("express");
