@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
+const validator = require("validator");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -10,6 +11,7 @@ const tourSchema = new mongoose.Schema(
       trim: true,
       maxlength: [40, "A tour name must have less or equal then 40 characters"],
       minlength: [10, "A tour name must have more or equal then 10 characters"],
+      // validate: [validator.isAlpha,"Tour name only containt letters"],
     },
     slug: String,
     duration: {
@@ -42,7 +44,16 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: [true, "A tour must have a price"],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          // this only points to the current doc on new document creation means only create method not udate
+          return val < this.price;
+        },
+        message: "Disscount price ({value}) should be below regular price",
+      },
+    },
     summary: {
       type: String,
       trim: true,
@@ -92,21 +103,21 @@ tourSchema.pre("save", function () {
 // })
 
 // query Middleware
-// tourSchema.pre("find", function () 
-tourSchema.pre(/^find/, function (){
+// tourSchema.pre("find", function ()
+tourSchema.pre(/^find/, function () {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
 });
 
-tourSchema.post(/^find/, function(doc){
-  console.log(`Query Took ${Date.now()-this.start} milliseconds`);
+tourSchema.post(/^find/, function (doc) {
+  console.log(`Query Took ${Date.now() - this.start} milliseconds`);
   console.log(doc);
-})
+});
 
-tourSchema.pre('aggregate',function(){
-  this.pipeline().unshift({$match:{secretTour:{ $ne:true}}});
+tourSchema.pre("aggregate", function () {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   console.log(this.pipeline);
-})
+});
 
 const Tour = mongoose.model("Tour", tourSchema);
 
