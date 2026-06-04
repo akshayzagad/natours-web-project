@@ -2,6 +2,7 @@ const express = require("express");
 
 const AppError = require('./utils/appError')
 const tourRouter = require("./routes/toursRoutes");
+const userRouter = require("./routes/usersRoutes")
 const morgan = require("morgan");
 
 const globalErrorHandler = require("./controllers/errorController")
@@ -15,53 +16,18 @@ app.use(express.json());
 
 app.use(express.static(`${__dirname}/public`));
 
-const getAllUsers = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "this rote is not defined!",
-  });
-};
-
-const getUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "this rote is not defined!",
-  });
-};
-
-const createUsers = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "this rote is not defined!",
-  });
-};
-
-const updateUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "this rote is not defined!",
-  });
-};
-
-const deleteUsers = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "this rote is not defined!",
-  });
-};
-
 // Mouting the router
 
 // const tourRouter = express.Router();
-const userRouter = express.Router();
+// const userRouter = express.Router();
 
 app.use("/api/v1/tours", tourRouter);
 
 app.use("/api/v1/users", userRouter);
 
-userRouter.route("/").get(getAllUsers).post(createUsers);
+// userRouter.route("/").get(getAllUsers).post(createUsers);
 
-userRouter.route("/:id").get(getUser).patch(updateUser).delete(deleteUsers);
+// userRouter.route("/:id").get(getUser).patch(updateUser).delete(deleteUsers);
 
 app.all("/*splat", (req, res, next) => {
   /**
