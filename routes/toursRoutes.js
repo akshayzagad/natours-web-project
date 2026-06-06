@@ -1,5 +1,5 @@
 const tourController = require("../controllers/tourcontroller");
-
+const authcontroller = require("../controllers/authController")
 // Middleware
 const express = require("express");
 
@@ -17,13 +17,13 @@ router.route("/monthly-plan/:year").get(tourController.getMonthlyPlan);
 
 router
   .route("/")
-  .get(tourController.getAllTours)
+  .get(authcontroller.protect,tourController.getAllTours)
   .post(tourController.createTour);
 
 router
   .route("/:id")
   .get(tourController.getTour)
   .patch(tourController.updateTour)
-  .delete(tourController.deleteTour);
+  .delete(authcontroller.protect, authcontroller.restrictTo('admin'), tourController.deleteTour);
 
 module.exports = router;
