@@ -18,7 +18,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt:req.body.passwordChangedAt
+    role: req.body.role,
+    passwordChangedAt: req.body.passwordChangedAt,
   });
   const token = signToken(newUser._id);
   res.status(201).json({
@@ -40,6 +41,8 @@ exports.login = catchAsync(async (req, res, next) => {
 
   //check is user is exists and email and password is correct
   const user = await User.findOne({ email }).select("+password");
+  // console.log("Login attempt with email:", email);
+  // console.log("User found in DB:", user);
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect email and password", 404));
@@ -47,6 +50,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // If everything is ok then send json web token
   const token = signToken(user._id);
+  // console.log("Token created for user ID:", user._id);
 
   res.status(200).json({
     status: "succses",
@@ -72,10 +76,11 @@ exports.protect = catchAsync(async (req, res, next) => {
   //2)Verification Token
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log("decoded code", decoded);
+  // console.log("decoded code", decoded);
 
   //3)Check if user still exists
   const currentUser = await User.findById(decoded.id);
+  // console.log("Current User from DB:", currentUser);
 
   if (!currentUser) {
     return next(
@@ -93,7 +98,20 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError("User recently changed password! Please log in again.", 401),
     );
   }
-// Grant accses protected route
+  // Grant accses protected route
   req.user = currentUser;
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    console.log("User role:", req.user.role, "Allowed roles:", roles);
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403),
+      );
+    }
+    next();
+  };
+};
+
