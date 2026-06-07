@@ -111,12 +111,12 @@ tourSchema.pre(/^find/, function () {
 
 tourSchema.post(/^find/, function (doc) {
   console.log(`Query Took ${Date.now() - this.start} milliseconds`);
-  console.log(doc);
+  // console.log(doc);
 });
 
 tourSchema.pre("aggregate", function () {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  console.log(this.pipeline);
+  // console.log(this.pipeline);
 });
 
 const Tour = mongoose.model("Tour", tourSchema);
