@@ -1,19 +1,36 @@
 const express = require("express");
 
-const AppError = require('./utils/appError')
+const AppError = require("./utils/appError");
 const tourRouter = require("./routes/toursRoutes");
-const userRouter = require("./routes/usersRoutes")
+const userRouter = require("./routes/usersRoutes");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 
-const globalErrorHandler = require("./controllers/errorController")
+const globalErrorHandler = require("./controllers/errorController");
+
 const app = express();
+//Security http headers
+app.use(helmet());
 
+// 1) Global Middleware
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.use(express.json());
+// limit request from api
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "To many request from this Ip , please try again in an hour!",
+});
 
+app.use("/api", limiter);
+
+// Body parser,reading data from body into req.body
+app.use(express.json({limit:'10kb'}));
+
+// Serving static file page
 app.use(express.static(`${__dirname}/public`));
 
 // Test middleware
@@ -51,7 +68,7 @@ app.all("/*splat", (req, res, next) => {
   // err.statusCode = 404;
   // next(err);
   //3}creating a custom class to handle error
-  next(new AppError(`can't find ${req.originalUrl} on this server!`,404));
+  next(new AppError(`can't find ${req.originalUrl} on this server!`, 404));
 });
 
 app.use(globalErrorHandler);
