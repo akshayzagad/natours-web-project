@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChangedAt: Date,
-  passwrdResetToken: String,
+  passwordResetToken: String,
   passwordResetExpires: Date,
 });
 
@@ -60,9 +60,18 @@ userSchema.pre("save", async function () {
   // Delete passwordConfirm field
   this.passwordConfirm = undefined;
 
-  if (!this.isNew) {
-    this.passwordChangedAt = Date.now() - 1000;
+  // if (!this.isNew) {
+  //   this.passwordChangedAt = Date.now() - 1000;
+  // }
+});
+
+userSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) {
+    return ;
   }
+
+  this.passwordChangedAt = Date.now() - 1000;
+  
 });
 
 userSchema.methods.correctPassword = async function (
@@ -75,7 +84,9 @@ userSchema.methods.correctPassword = async function (
 userSchema.methods.changePasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
+      (this.passwordChangedAt.getTime
+        ? this.passwordChangedAt.getTime()
+        : new Date(this.passwordChangedAt).getTime()) / 1000,
       10,
     );
     console.log(
@@ -91,12 +102,14 @@ userSchema.methods.changePasswordAfter = function (JWTTimestamp) {
 };
 
 userSchema.methods.createPasswordResetToken = function () {
+  //1) Here we create a temparary token for a forgot password 
   const resetToken = crypto.randomBytes(32).toString("hex");
-  this.passwrdResetToken = crypto
+  // 2) here we incrypted it and send to the database 
+  this.passwordResetToken = crypto
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  console.log({ resetToken }, this.passwrdResetToken);
+  console.log({ resetToken }, this.passwordResetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
