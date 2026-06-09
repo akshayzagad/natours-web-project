@@ -3,7 +3,9 @@ const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize")
-const xss = require('xss-clean')
+const xss = require('xss-clean');
+const sanitizeHtml = require('sanitize-html');
+const hpp = require('hpp');
 
 const AppError = require("./utils/appError");
 const tourRouter = require("./routes/toursRoutes");
@@ -32,11 +34,67 @@ app.use("/api", limiter);
 // Body parser,reading data from body into req.body
 app.use(express.json({limit:'10kb'}));
 
-//Data santization against noSQL query injection
-app.use(mongoSanitize());
+// Data santization against noSQL query injection
+// app.use(mongoSanitize());
+// MongoDB NoSQL Injection Protection
+app.use((req, res, next) => {
+  const sanitize = (obj) => {
+    if (!obj || typeof obj !== "object") return;
+
+    for (const key in obj) {
+      if (key.startsWith("$") || key.includes(".")) {
+        delete obj[key];
+      } else if (typeof obj[key] === "object") {
+        sanitize(obj[key]);
+      }
+    }
+  };
+
+  sanitize(req.body);
+  sanitize(req.query);
+  sanitize(req.params);
+
+  next();
+});
 
 //Data santization against cross side scripting attack
-app.use(xss());
+// app.use(xss());
+// Data sanitization against XSS
+app.use((req, res, next) => {
+  const clean = (obj) => {
+    if (!obj || typeof obj !== 'object') return;
+
+    for (const key in obj) {
+      if (typeof obj[key] === 'string') {
+        obj[key] = sanitizeHtml(obj[key], {
+          allowedTags: [],
+          allowedAttributes: {}
+        });
+      } else if (typeof obj[key] === 'object') {
+        clean(obj[key]);
+      }
+    }
+  };
+
+  clean(req.body);
+  clean(req.query);
+
+  next();
+});
+
+// Prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price'
+    ]
+  })
+);
 
 // Serving static file page
 app.use(express.static(`${__dirname}/public`));

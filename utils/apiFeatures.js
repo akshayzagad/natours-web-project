@@ -30,16 +30,22 @@ class APIFeatures {
   }
 
   sort() {
-    // 2}Sorting
-    const sortVal = this.aliasParams?.sort || this.queryString.sort;
-    if (sortVal) {
-      const sortBy = sortVal.split(",").join(" ");
-      this.query = this.query.sort(sortBy);
-    } else {
-      this.query = this.query.sort("-createdAt");
-    }
-    return this;
+  let sortVal = this.aliasParams?.sort || this.queryString.sort;
+
+  if (sortVal) {
+
+    const sortBy = Array.isArray(sortVal)
+      ? sortVal.join(' ')
+      : sortVal.split(',').join(' ');
+
+    this.query = this.query.sort(sortBy);
+
+  } else {
+    this.query = this.query.sort('-createdAt');
   }
+
+  return this;
+}
 
   limitFields() {
     //3} Fields
