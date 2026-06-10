@@ -21,7 +21,7 @@ const reviewSchema = new moongoose.Schema(
     },
     user: {
       type: moongoose.Schema.ObjectId,
-      ref: "user",
+      ref: "User",
       required: [true, "Review mus belong to User"],
     },
   },
@@ -30,6 +30,21 @@ const reviewSchema = new moongoose.Schema(
     toObject: { virtuals: true },
   },
 );
+
+reviewSchema.pre(/^find/,function(){
+    // this.populate({
+  //   path: 'tour',
+  //   select: 'name'
+  // }).populate({
+  //   path: 'user',
+  //   select: 'name photo'
+  // });
+
+  this.populate({
+    path: 'user',
+    select: 'name photo'
+  });
+})
 
 const Review = mongoose.model("Review", reviewSchema);
 
