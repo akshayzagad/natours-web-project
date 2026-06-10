@@ -1,13 +1,28 @@
-const userController = require('../controllers/userController')
+const authController = require("../controllers/authController");
+const userController = require("../controllers/userController");
 
-const express = require('express')
+const express = require("express");
 
 const router = express.Router();
 
+router.post("/signUp", authController.signUp);
+router.post("/login", authController.login);
+router.post("/forgotPassword", authController.forgotPassword);
+router.patch("/resetPassword/:token", authController.resetPassword);
+router.patch(
+  "/updateMyPassword",
+  authController.protect,
+  authController.updatePassword,
+);
+router.patch("/updateMe", authController.protect, userController.updateMe);
+router.delete("/deleteMe", authController.protect, userController.deleteMe);
 /** Routes For Users */
 
-router.route('/').get(userController.getAllUsers).post(userController.createUsers);
+router
+  .route("/")
+  .get(userController.getAllUsers)
+  .post(userController.createUsers);
 
 // router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
-module.exports = router; 
+module.exports = router;

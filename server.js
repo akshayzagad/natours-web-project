@@ -3,6 +3,12 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
 
+process.on("uncaughtException", (err) => {
+  console.log("Unhandle Exception Shuting down");
+  console.log(err.name,err.message);
+    process.exit(1);
+});
+
 const app = require("./app");
 
 const DB = process.env.DATABASE.replace(
@@ -10,30 +16,9 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD,
 );
 
-mongoose
-  .connect(DB)
-  .then((con) => {
-    console.log(con.connection);
-    console.log("DB connection succesful");
-  })
-  .catch((err) => {
-    console.error("DB connection error:", err);
-  });
-
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "A tour must have name"],
-    unique: true,
-  },
-  rating: {
-    type: Number,
-    default: 4.5,
-  },
-  price: {
-    type: Number,
-    required: [true, "A tour must have price"],
-  },
+mongoose.connect(DB).then((con) => {
+  console.log(con.connection);
+  console.log("DB connection succesful");
 });
 
 // const Tour = mongoose.model("Tour", tourSchema);
@@ -54,6 +39,14 @@ const tourSchema = new mongoose.Schema({
 //   });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log(err.name, err.message);
+  console.log("Unhandle Rejection Shuting down");
+  server.close(() => {
+    process.exit(1);
+  });
 });
