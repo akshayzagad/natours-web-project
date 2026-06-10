@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const slugify = require("slugify");
 const validator = require("validator");
 
+const User = require("../models/userModel")
+
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -78,6 +80,30 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      //GeoLocatin geoJson
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    location: {
+      //GeoLocatin geoJson
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+      day: Number,
+    },
+    guides:Array,
   },
   {
     toJSON: { virtuals: true },
@@ -93,6 +119,11 @@ tourSchema.virtual("durationWeeks").get(function () {
 tourSchema.pre("save", function () {
   this.slug = slugify(this.name, { lower: true });
 });
+
+tourSchema.pre("save",async function () {
+  const guidesPromises =  this.guides.map(async id => await User.findById(id));
+  this.guides =await Promise.all(guidesPromises);
+})
 
 // tourSchema.pre('save', function() {
 //   console.log("Doc is svingg...");
