@@ -23,6 +23,6 @@ router
   .get(userController.getAllUsers)
   .post(userController.createUsers);
 
-// router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+router.route("/:id").patch(userController.updateUser).delete(userController.deleteUser);
 
 module.exports = router;
