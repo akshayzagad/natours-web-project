@@ -117,6 +117,12 @@ tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
 
+/**
+ * Indexing the two field to optimize search 
+ */
+tourSchema.index({price:1,ratingsAverage:-1});
+tourSchema.index({slug:1});
+
 // Virtual Populate
 tourSchema.virtual("reviews",{
   ref:'Review',
