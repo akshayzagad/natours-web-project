@@ -12,11 +12,16 @@ const filterObj = (obj, ...allowFields) => {
   return newObj;
 };
 
-const users = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/users.json`),
-);
+// const users = JSON.parse(
+//   fs.readFileSync(`${__dirname}/../dev-data/data/users.json`),
+// );
 
 /** Routes Handlers for Users */
+
+exports.getMe = (req,res,next) =>{
+  req.params.id = req.user.id;
+  next()
+}
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
