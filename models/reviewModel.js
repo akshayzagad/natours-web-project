@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const moongoose = require("mongoose");
-const Tour = require('./tourModel')
+const Tour = require("./tourModel");
 
 const reviewSchema = new moongoose.Schema(
   {
@@ -32,6 +32,8 @@ const reviewSchema = new moongoose.Schema(
   },
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function () {
   // this.populate({
   //   path: 'tour',
@@ -53,24 +55,41 @@ reviewSchema.statics.calculateAverageRatings = async function (tourId) {
     {
       $group: {
         _id: "$tour",
-        nRating: { $sum:1 },
+        nRating: { $sum: 1 },
         avgRating: { $avg: "$rating" },
       },
     },
   ]);
-  console.log(stats); 
-  await Tour.findByIdAndUpdate(tourId,{
-    ratingsQuantity:stats[0].nRating,
-    ratingsAverage:stats[0].avgRating
-  })
+  // console.log(stats);
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5,
+    });
+  }
 };
 
 // This middleware write beacause we want to call calculateAverageRatings method
-reviewSchema.post('save',async function(){
-  /** Here we did not use 'Review' because we declare it on line no 68 so we use constructor 
+reviewSchema.post("save", async function () {
+  /** Here we did not use 'Review' because we declare it on line no 68 so we use constructor
    * to call above statics method */
   await this.constructor.calculateAverageRatings(this.tour);
-})
+});
+
+reviewSchema.pre(/^findOneAnd|^findByIdAnd/, async function () {
+  this.reviewDoc = await this.model.findOne(this.getFilter());
+});
+
+reviewSchema.post(/^findOneAnd|^findByIdAnd/, async function () {
+  if (this.reviewDoc && this.reviewDoc.tour) {
+    await this.model.calculateAverageRatings(this.reviewDoc.tour);
+  }
+});
 
 const Review = mongoose.model("Review", reviewSchema);
 
