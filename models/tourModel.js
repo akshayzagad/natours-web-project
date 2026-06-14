@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const slugify = require("slugify");
 const validator = require("validator");
 
-const User = require("../models/userModel")
+const User = require("../models/userModel");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -37,6 +37,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, "Rating must be above 1.0"],
       max: [5, "Rating must be below 5.0"],
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
@@ -103,9 +104,7 @@ const tourSchema = new mongoose.Schema(
       description: String,
       day: Number,
     },
-    guides:[
-      {type: mongoose.Schema.ObjectId,ref:'User'}
-    ],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   },
   {
     toJSON: { virtuals: true },
@@ -117,12 +116,19 @@ tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
 
+/**
+ * Indexing the two field to optimize search
+ */
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: "2dsphere" });
+
 // Virtual Populate
-tourSchema.virtual("reviews",{
-  ref:'Review',
-  foreignField:'tour',
-  localField:'_id'
-})
+tourSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
 
 // Document Middleware: runs before .save() and .create()
 tourSchema.pre("save", function () {
@@ -149,8 +155,8 @@ tourSchema.pre(/^find/, function () {
   this.start = Date.now();
 });
 
-tourSchema.pre(/^find/,function(){
-  this.populate({path:'guides',select:'-__v -passwordChangedAt'})
+tourSchema.pre(/^find/, function () {
+  this.populate({ path: "guides", select: "-__v -passwordChangedAt" });
 });
 
 tourSchema.post(/^find/, function (doc) {
@@ -158,10 +164,10 @@ tourSchema.post(/^find/, function (doc) {
   // console.log(doc);
 });
 
-tourSchema.pre("aggregate", function () {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  // console.log(this.pipeline);
-});
+// tourSchema.pre("aggregate", function () {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+
+// });
 
 const Tour = mongoose.model("Tour", tourSchema);
 
