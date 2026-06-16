@@ -559,11 +559,11 @@ body {
   cursor: pointer;
 }
 
-.mapboxgl-popup {
+.leaflet-popup {
   max-width: 25rem;
 }
 
-.mapboxgl-popup-content {
+.leaflet-popup-content {
   text-align: center;
   font-family: 'Lato', sans-serif;
   padding: 1.5rem !important;
