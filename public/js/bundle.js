@@ -8257,6 +8257,35 @@ const logout = async () => {
   }
 };
 exports.logout = logout;
+},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"updateSetting.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateSettings = void 0;
+var _axios = _interopRequireDefault(require("axios"));
+var _alert = require("./alert");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+/* eslint-disable */
+
+// type is either 'password' or 'data'
+const updateSettings = async (data, type) => {
+  try {
+    const url = type === 'password' ? 'http://127.0.0.1:3000/api/v1/users/updateMyPassword' : 'http://127.0.0.1:3000/api/v1/users/updateMe';
+    const res = await (0, _axios.default)({
+      method: 'PATCH',
+      url,
+      data
+    });
+    if (res.data.status === 'success') {
+      (0, _alert.showAlert)('success', "".concat(type.toUpperCase(), " updated successfully!"));
+    }
+  } catch (err) {
+    (0, _alert.showAlert)('error', err.response.data.message);
+  }
+};
+exports.updateSettings = updateSettings;
 },{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -8270,9 +8299,8 @@ require("core-js/modules/web.timers.js");
 require("core-js/modules/web.immediate.js");
 require("core-js/modules/web.dom.iterable.js");
 var _login = require("./login");
+var _updateSetting = require("./updateSetting");
 // import { displayMap } from './mapbox';
-
-// import { updateSettings } from './updateSettings';
 
 const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".form--login");
@@ -8293,7 +8321,16 @@ if (loginForm) loginForm.addEventListener("submit", e => {
   (0, _login.login)(email, password);
 });
 if (logOutBtn) logOutBtn.addEventListener("click", _login.logout);
-},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+if (userDataForm) userDataForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  (0, _updateSetting.updateSettings)({
+    name,
+    email
+  }, 'data');
+});
+},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./updateSetting":"updateSetting.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

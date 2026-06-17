@@ -13,7 +13,7 @@ exports.deleteOne = (Model) =>
       return next(new AppError("No document found with that ID", 404));
     }
     res.status(204).json({
-      status: "succses",
+      status: "success",
       data: null,
     });
   });
@@ -28,7 +28,7 @@ exports.updateOne = (model) =>
       return next(new AppError("No document found with that ID", 404));
     }
     res.status(200).json({
-      status: "succses",
+      status: "success",
       data: {
         data: doc,
       },
@@ -60,7 +60,7 @@ exports.getOne = (model, populateOption) =>
       return next(new AppError("No document found with that ID", 404));
     }
     res.status(200).json({
-      status: "succses",
+      status: "success",
       data: {
         doc,
       },
