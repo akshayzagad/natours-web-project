@@ -10,9 +10,13 @@
     "start:dev": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "lint": "eslint .",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "axios": "^1.18.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
@@ -36,6 +40,7 @@
   "devDependencies": {
     "cross-env": "^10.1.0",
     "eslint": "^10.2.1",
-    "ndb": "^1.1.5"
+    "ndb": "^1.1.5",
+    "parcel-bundler": "^1.12.5"
   }
 }
