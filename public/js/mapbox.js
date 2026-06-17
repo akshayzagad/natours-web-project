@@ -42,11 +42,4 @@ const displayMap = locations => {
   });
 };
 
-const mapBox = document.getElementById('map');
 
-if (mapBox) {
-  const locations = JSON.parse(
-    mapBox.dataset.location || mapBox.dataset.locations || '[]'
-  );
-  displayMap(locations);
-}
