@@ -8321,14 +8321,30 @@ if (loginForm) loginForm.addEventListener("submit", e => {
   (0, _login.login)(email, password);
 });
 if (logOutBtn) logOutBtn.addEventListener("click", _login.logout);
-if (userDataForm) userDataForm.addEventListener('submit', e => {
+if (userDataForm) userDataForm.addEventListener("submit", e => {
   e.preventDefault();
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
   (0, _updateSetting.updateSettings)({
     name,
     email
-  }, 'data');
+  }, "data");
+});
+if (userPasswordForm) userPasswordForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  document.querySelector(".btn--save-password").textContent = "Updating...";
+  const passwordCurrent = document.getElementById("password-current").value;
+  const password = document.getElementById("password").value;
+  const passwordConfirm = document.getElementById("password-confirm").value;
+  await (0, _updateSetting.updateSettings)({
+    passwordCurrent,
+    password,
+    passwordConfirm
+  }, "password");
+  document.querySelector(".btn--save-password").textContent = "Save password";
+  document.getElementById("password-current").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("password-confirm").value = "";
 });
 },{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./updateSetting":"updateSetting.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -8355,7 +8371,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61343" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58147" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
