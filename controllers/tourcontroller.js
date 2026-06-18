@@ -1,4 +1,6 @@
 // const Tour = require("./../models/tourModel");
+const multer = require("multer");
+const sharp = require("sharp");
 
 const Tour = require("../models/tourModel");
 const APIFeatures = require("../utils/apiFeatures");
@@ -30,6 +32,59 @@ const factory = require("./handlerFactory");
 //   }
 //   next();
 // }
+
+const multerStorage = multer.memoryStorage();
+
+const multerfilter = (req, file, callback) => {
+  if (file.mimetype.startsWith("image")) {
+    callback(null, true);
+  } else {
+    callback(
+      new AppError("not an a image! please upload the image.", 400),
+      false,
+    );
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerfilter });
+
+exports.uploadTourImages = upload.fields([
+  { name: "imageCover", maxCount: 1 },
+  { name: "images", maxCount: 3 },
+]);
+// upload.single('image')
+// upload.array('images',5);
+
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) {
+    return next();
+  }
+  // req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`
+  /** For ImageCover */
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+
+  /** For Images */
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, index) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${filename}`);
+        req.body.images.push(filename);
+    }),
+  );
+
+  next();
+});
 
 exports.aliasTopTour = (req, res, next) => {
   req.aliasParams = {
@@ -186,13 +241,13 @@ exports.getDistances = catchAsync(async (req, res, next) => {
           coordinates: [lng * 1, lat * 1],
         },
         distanceField: "distance",
-        distanceMultiplier:multiplier
+        distanceMultiplier: multiplier,
       },
     },
     {
       $project: {
         distance: 1,
-        name:1
+        name: 1,
       },
     },
   ]);
