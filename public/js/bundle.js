@@ -8321,14 +8321,14 @@ if (loginForm) loginForm.addEventListener("submit", e => {
   (0, _login.login)(email, password);
 });
 if (logOutBtn) logOutBtn.addEventListener("click", _login.logout);
-if (userDataForm) userDataForm.addEventListener("submit", e => {
+if (userDataForm) userDataForm.addEventListener('submit', e => {
   e.preventDefault();
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  (0, _updateSetting.updateSettings)({
-    name,
-    email
-  }, "data");
+  const form = new FormData();
+  form.append('name', document.getElementById('name').value);
+  form.append('email', document.getElementById('email').value);
+  form.append('photo', document.getElementById('photo').files[0]);
+  console.log(form);
+  (0, _updateSetting.updateSettings)(form, 'data');
 });
 if (userPasswordForm) userPasswordForm.addEventListener("submit", async e => {
   e.preventDefault();

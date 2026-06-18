@@ -14,18 +14,23 @@ router.patch("/resetPassword/:token", authController.resetPassword);
 // Procted all route after below routes
 router.use(authController.protect);
 /** Routes For Users */
+router.patch("/updateMyPassword", authController.updatePassword);
+router.get("/me", userController.getMe, userController.getUser);
 router.patch(
-  "/updateMyPassword",
-  authController.updatePassword,
+  "/updateMe",
+  userController.uploadUserPhoto,
+  userController.resizeUserPhoto,
+  userController.updateMe,
 );
-router.get("/me",userController.getMe,userController.getUser);
-router.patch("/updateMe",userController.updateMe);
-router.delete("/deleteMe",userController.deleteMe);
+router.delete("/deleteMe", userController.deleteMe);
 
 /** Routes For only administer control Users */
-router.use(authController.restrictTo('admin'));
+router.use(authController.restrictTo("admin"));
 
-router.route("/").get(userController.getAllUsers).post(userController.createUser);
+router
+  .route("/")
+  .get(userController.getAllUsers)
+  .post(userController.createUser);
 
 router
   .route("/:id")
