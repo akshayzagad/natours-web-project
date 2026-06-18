@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
-// const helmet = require("helmet");
+const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const sanitizeHtml = require("sanitize-html");
@@ -29,21 +29,21 @@ app.use(
   express.static(path.join(__dirname, "node_modules/leaflet/dist")),
 );
 
-//Security http headers
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//       directives: {
-//         defaultSrc: ["'self'"],
-//         scriptSrc: ["'self'"],
-//         styleSrc: ["'self'", "https:", "'unsafe-inline'"],
-//         imgSrc: ["'self'", "data:", "https://*.tile.openstreetmap.org"],
-//         fontSrc: ["'self'", "https:", "data:"],
-//         connectSrc: ["'self'"],
-//       },
-//     },
-//   }),
-// );
+// Security http headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https://*.tile.openstreetmap.org"],
+        fontSrc: ["'self'", "https:", "data:"],
+        connectSrc: ["'self'"],
+      },
+    },
+  }),
+);
 
 // 1) Global Middleware
 if (process.env.NODE_ENV === "development") {

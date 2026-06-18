@@ -2,7 +2,34 @@ const fs = require("fs");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
-const factory = require('./handlerFactory')
+const factory = require("./handlerFactory");
+const multer = require("multer");
+const sharp = require("sharp");
+
+// const multerStorage = multer.diskStorage({
+//   destination:(req,file,callback) => {
+//     callback(null, 'public/img/users')
+//   },
+//   filename:(req,file,callback) => {
+//     const ext = file.mimetype.split('/')[1];
+//     callback(null, `user${req.user.id}-${Date.now()}.${ext}`)
+//   }
+// })
+
+const multerStorage = multer.memoryStorage();
+
+const multerfilter = (req, file, callback) => {
+  if (file.mimetype.startsWith("image")) {
+    callback(null, true);
+  } else {
+    callback(
+      new AppError("not an a image! please upload the image.", 400),
+      false,
+    );
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerfilter });
 
 const filterObj = (obj, ...allowFields) => {
   const newObj = {};
@@ -12,16 +39,32 @@ const filterObj = (obj, ...allowFields) => {
   return newObj;
 };
 
+exports.uploadUserPhoto = upload.single("photo");
+
+exports.resizeUserPhoto =catchAsync( async(req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`
+  await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+    next()
+  });
+
 // const users = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/users.json`),
 // );
 
 /** Routes Handlers for Users */
 
-exports.getMe = (req,res,next) =>{
+exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
-  next()
-}
+  next();
+};
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
@@ -34,6 +77,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
   //Filtered unwanted fields which is not allows to be updated
   const filteredBody = filterObj(req.body, "name", "email");
+  if (req.file) filteredBody.photo = req.file.filename;
   //Update user documents
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
@@ -47,19 +91,19 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req,res,next)=>{
-  await User.findByIdAndUpdate(req.user.id,{active:false});
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
-    status:'success',
-    data:null
-  })
-})
+    status: "success",
+    data: null,
+  });
+});
 
 exports.getAllUsers = factory.getAll(User);
 
 exports.getUser = factory.getOne(User);
 
-exports.createUser = factory.createOne(User)
+exports.createUser = factory.createOne(User);
 
 exports.updateUser = factory.updateOne(User);
 
