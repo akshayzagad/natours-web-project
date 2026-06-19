@@ -105,4 +105,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-.config.envconfig.env
+.config.env
