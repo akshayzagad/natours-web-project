@@ -14,6 +14,7 @@ const tourRouter = require("./routes/toursRoutes");
 const userRouter = require("./routes/usersRoutes");
 const reviweRouter = require("./routes/reviewRoutes");
 const viewRouter = require("./routes/viewsRoutes");
+const bookingRouter = require("./routes/bookingRoutes");
 
 const globalErrorHandler = require("./controllers/errorController");
 
@@ -144,6 +145,8 @@ app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
 app.use("/api/v1/reviews", reviweRouter);
+
+app.use("/api/v1/bookings", bookingRouter);
 
 // userRouter.route("/").get(getAllUsers).post(createUsers);
 

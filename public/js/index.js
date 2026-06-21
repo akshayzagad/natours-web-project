@@ -2,6 +2,7 @@ import "@babel/polyfill";
 // import { displayMap } from './mapbox';
 import { login, logout } from "./login";
 import { updateSettings } from "./updateSetting";
+import { bookTour } from './Paystack';
 
 const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".form--login");
@@ -57,4 +58,15 @@ if (userPasswordForm)
     document.getElementById("password-current").value = "";
     document.getElementById("password").value = "";
     document.getElementById("password-confirm").value = "";
+  });
+
+  const bookBtn = document.getElementById('book-tour');
+
+if (bookBtn)
+  bookBtn.addEventListener('click', e => {
+    e.target.textContent = 'Processing...';
+
+    const { tourId } = e.target.dataset;
+
+    bookTour(tourId);
   });

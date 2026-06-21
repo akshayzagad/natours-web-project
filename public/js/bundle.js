@@ -8286,6 +8286,31 @@ const updateSettings = async (data, type) => {
   }
 };
 exports.updateSettings = updateSettings;
+},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"Paystack.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.bookTour = void 0;
+var _axios = _interopRequireDefault(require("axios"));
+var _alert = require("./alert");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+/* eslint-disable */
+
+const bookTour = async tourId => {
+  try {
+    // Get Paystack checkout URL
+    const res = await (0, _axios.default)("/api/v1/bookings/checkout-session/".concat(tourId));
+
+    // Redirect to Paystack
+    window.location.assign(res.data.session.authorization_url);
+  } catch (err) {
+    console.error(err);
+    (0, _alert.showAlert)('error', 'Payment initialization failed');
+  }
+};
+exports.bookTour = bookTour;
 },{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -8300,6 +8325,7 @@ require("core-js/modules/web.immediate.js");
 require("core-js/modules/web.dom.iterable.js");
 var _login = require("./login");
 var _updateSetting = require("./updateSetting");
+var _Paystack = require("./Paystack");
 // import { displayMap } from './mapbox';
 
 const mapBox = document.getElementById("map");
@@ -8346,7 +8372,13 @@ if (userPasswordForm) userPasswordForm.addEventListener("submit", async e => {
   document.getElementById("password").value = "";
   document.getElementById("password-confirm").value = "";
 });
-},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./updateSetting":"updateSetting.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+const bookBtn = document.getElementById('book-tour');
+if (bookBtn) bookBtn.addEventListener('click', e => {
+  e.target.textContent = 'Processing...';
+  const tourId = e.target.dataset.tourId;
+  (0, _Paystack.bookTour)(tourId);
+});
+},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./updateSetting":"updateSetting.js","./Paystack":"Paystack.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -8371,7 +8403,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53036" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62864" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
