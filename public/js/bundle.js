@@ -8250,13 +8250,53 @@ const logout = async () => {
       method: 'GET',
       url: 'http://127.0.0.1:3000/api/v1/users/logout'
     });
-    if (res.data.status = 'success') location.reload(true);
+    if (res.data.status === 'success') {
+      console.log(res.data.status);
+      (0, _alert.showAlert)('success', 'you are logout successfully!');
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1500);
+    }
   } catch (err) {
     console.log(err.response);
     (0, _alert.showAlert)('error', 'Error logging out! Try again.');
   }
 };
 exports.logout = logout;
+},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"signup.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.signup = void 0;
+var _axios = _interopRequireDefault(require("axios"));
+var _alert = require("./alert");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+const signup = async (name, email, password, passwordConfirm) => {
+  try {
+    const res = await (0, _axios.default)({
+      method: 'POST',
+      url: 'http://127.0.0.1:3000/api/v1/users/signUp',
+      data: {
+        name,
+        email,
+        password,
+        passwordConfirm
+      }
+    });
+    if (res.data.status === 'success') {
+      console.log(res.data.status);
+      (0, _alert.showAlert)('success', 'Sign up successfully!');
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1500);
+    }
+  } catch (err) {
+    (0, _alert.showAlert)('error', err.response.data.message);
+  }
+};
+exports.signup = signup;
 },{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"updateSetting.js":[function(require,module,exports) {
 "use strict";
 
@@ -8324,11 +8364,13 @@ require("core-js/modules/web.timers.js");
 require("core-js/modules/web.immediate.js");
 require("core-js/modules/web.dom.iterable.js");
 var _login = require("./login");
+var _signup = require("./signup");
 var _updateSetting = require("./updateSetting");
 var _Paystack = require("./Paystack");
 // import { displayMap } from './mapbox';
 
 const mapBox = document.getElementById("map");
+const signupForm = document.querySelector(".form--signup");
 const loginForm = document.querySelector(".form--login");
 const logOutBtn = document.querySelector(".nav__el--logout");
 const userDataForm = document.querySelector(".form-user-data");
@@ -8340,6 +8382,14 @@ if (mapBox) {
   const locations = JSON.parse(mapBox.dataset.location || mapBox.dataset.locations || "[]");
   displayMap(locations);
 }
+if (signupForm) signupForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const passwordConfirm = document.getElementById("passwordConfirm").value;
+  (0, _signup.signup)(name, email, password, passwordConfirm);
+});
 if (loginForm) loginForm.addEventListener("submit", e => {
   e.preventDefault();
   const email = document.getElementById("email").value;
@@ -8378,7 +8428,7 @@ if (bookBtn) bookBtn.addEventListener('click', e => {
   const tourId = e.target.dataset.tourId;
   (0, _Paystack.bookTour)(tourId);
 });
-},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./updateSetting":"updateSetting.js","./Paystack":"Paystack.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./signup":"signup.js","./updateSetting":"updateSetting.js","./Paystack":"Paystack.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -8403,7 +8453,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49217" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56253" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
