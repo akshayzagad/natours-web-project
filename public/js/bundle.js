@@ -8351,6 +8351,38 @@ const bookTour = async tourId => {
   }
 };
 exports.bookTour = bookTour;
+},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"review.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createReview = void 0;
+var _axios = _interopRequireDefault(require("axios"));
+var _alert = require("./alert");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+const createReview = async (tourId, review, rating) => {
+  try {
+    const res = await (0, _axios.default)({
+      method: 'POST',
+      url: "http://127.0.0.1:3000/api/v1/tours/".concat(tourId, "/reviews/"),
+      data: {
+        review,
+        rating
+      }
+    });
+    if (res.data.status === 'success') {
+      console.log(res.data.status);
+      (0, _alert.showAlert)('success', 'Review created successfully!');
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    }
+  } catch (err) {
+    (0, _alert.showAlert)('error', err.response.data.message);
+  }
+};
+exports.createReview = createReview;
 },{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -8367,6 +8399,7 @@ var _login = require("./login");
 var _signup = require("./signup");
 var _updateSetting = require("./updateSetting");
 var _Paystack = require("./Paystack");
+var _review = require("./review");
 // import { displayMap } from './mapbox';
 
 const mapBox = document.getElementById("map");
@@ -8375,6 +8408,7 @@ const loginForm = document.querySelector(".form--login");
 const logOutBtn = document.querySelector(".nav__el--logout");
 const userDataForm = document.querySelector(".form-user-data");
 const userPasswordForm = document.querySelector(".form-user-password");
+const createReviewForm = document.querySelector(".form-review");
 
 // DELEGATION
 
@@ -8382,6 +8416,13 @@ if (mapBox) {
   const locations = JSON.parse(mapBox.dataset.location || mapBox.dataset.locations || "[]");
   displayMap(locations);
 }
+if (createReviewForm) createReviewForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const review = document.getElementById("review").value;
+  const rating = document.getElementById("rating").value;
+  const tourId = createReviewForm.dataset.tourId;
+  (0, _review.createReview)(tourId, review, rating);
+});
 if (signupForm) signupForm.addEventListener("submit", e => {
   e.preventDefault();
   const name = document.getElementById("name").value;
@@ -8397,14 +8438,14 @@ if (loginForm) loginForm.addEventListener("submit", e => {
   (0, _login.login)(email, password);
 });
 if (logOutBtn) logOutBtn.addEventListener("click", _login.logout);
-if (userDataForm) userDataForm.addEventListener('submit', e => {
+if (userDataForm) userDataForm.addEventListener("submit", e => {
   e.preventDefault();
   const form = new FormData();
-  form.append('name', document.getElementById('name').value);
-  form.append('email', document.getElementById('email').value);
-  form.append('photo', document.getElementById('photo').files[0]);
+  form.append("name", document.getElementById("name").value);
+  form.append("email", document.getElementById("email").value);
+  form.append("photo", document.getElementById("photo").files[0]);
   console.log(form);
-  (0, _updateSetting.updateSettings)(form, 'data');
+  (0, _updateSetting.updateSettings)(form, "data");
 });
 if (userPasswordForm) userPasswordForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -8422,13 +8463,23 @@ if (userPasswordForm) userPasswordForm.addEventListener("submit", async e => {
   document.getElementById("password").value = "";
   document.getElementById("password-confirm").value = "";
 });
-const bookBtn = document.getElementById('book-tour');
-if (bookBtn) bookBtn.addEventListener('click', e => {
-  e.target.textContent = 'Processing...';
+const bookBtn = document.getElementById("book-tour");
+if (bookBtn) bookBtn.addEventListener("click", e => {
+  e.target.textContent = "Processing...";
   const tourId = e.target.dataset.tourId;
   (0, _Paystack.bookTour)(tourId);
 });
-},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./signup":"signup.js","./updateSetting":"updateSetting.js","./Paystack":"Paystack.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+const reviewBtn = document.getElementById("show-review-form");
+if (reviewBtn) reviewBtn.addEventListener("click", () => {
+  const reviewSection = document.getElementById("review-form");
+  if (!reviewSection) return;
+  reviewSection.style.display = "block";
+  reviewSection.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
+},{"core-js/modules/es7.array.flat-map.js":"../../node_modules/core-js/modules/es7.array.flat-map.js","core-js/modules/es6.array.sort.js":"../../node_modules/core-js/modules/es6.array.sort.js","core-js/modules/es7.promise.finally.js":"../../node_modules/core-js/modules/es7.promise.finally.js","core-js/modules/es7.symbol.async-iterator.js":"../../node_modules/core-js/modules/es7.symbol.async-iterator.js","core-js/modules/es7.string.trim-left.js":"../../node_modules/core-js/modules/es7.string.trim-left.js","core-js/modules/es7.string.trim-right.js":"../../node_modules/core-js/modules/es7.string.trim-right.js","core-js/modules/web.timers.js":"../../node_modules/core-js/modules/web.timers.js","core-js/modules/web.immediate.js":"../../node_modules/core-js/modules/web.immediate.js","core-js/modules/web.dom.iterable.js":"../../node_modules/core-js/modules/web.dom.iterable.js","./login":"login.js","./signup":"signup.js","./updateSetting":"updateSetting.js","./Paystack":"Paystack.js","./review":"review.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -8453,7 +8504,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56253" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64428" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

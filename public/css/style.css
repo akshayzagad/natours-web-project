@@ -559,11 +559,11 @@ body {
   cursor: pointer;
 }
 
-.leaflet-popup {
+.mapboxgl-popup {
   max-width: 25rem;
 }
 
-.leaflet-popup-content {
+.mapboxgl-popup-content {
   text-align: center;
   font-family: 'Lato', sans-serif;
   padding: 1.5rem !important;
@@ -830,6 +830,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  justify-content: flex-end;
 }
 .footer__nav li {
   margin-left: 1.5rem;
@@ -1321,4 +1322,23 @@ body {
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
+}
+
+.section-review-form {
+  padding: 8rem 0;
+  background-color: #f7f7f7;
+}
+
+.review-box {
+  max-width: 80rem;
+  margin: 0 auto;
+  background: #fff;
+  padding: 4rem;
+  border-radius: 8px;
+  box-shadow: 0 1.5rem 4rem rgba(0,0,0,.08);
+}
+
+.form-review textarea {
+  min-height: 14rem;
+  resize: vertical;
 }

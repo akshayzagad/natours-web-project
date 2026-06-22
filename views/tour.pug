@@ -85,10 +85,62 @@ block content
       img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
       img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
       .cta__content
-        h2.heading-secondary What are you waiting for?
-        p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
-        
-        if user
-          button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+        if hasBooked
+          h2.heading-secondary You already booked this tour — now tell us how it went.
         else
+          h2.heading-secondary What are you waiting for?
+        p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
+
+        if !user
           a.btn.btn--green.span-all-rows(href='/login') Log in to book tour
+        else if !hasBooked
+          button.btn.btn--green.span-all-rows#book-tour(type='button' data-tour-id=`${tour.id}`) Book tour now!
+        else if hasBooked && !hasReviewed
+          button.btn.btn--green.span-all-rows#show-review-form(
+            type='button'
+          ) Review this tour
+        else
+          button.btn.btn--green.span-all-rows(
+            type='button'
+            disabled
+          ) Review Submitted
+
+  if user && hasBooked
+    section.section-review-form#review-form(style='display:none')
+      .row
+        .review-box
+
+          h2.heading-secondary.ma-bt-lg
+            | Share Your Experience
+
+          form.form.form-review(data-tour-id=`${tour.id}`)
+
+            .form__group
+              label.form__label(for='review')
+                | Your Review
+
+              textarea.form__input(
+                id='review'
+                name='review'
+                rows='6'
+                placeholder='Tell other travelers about your experience...'
+                required
+              )
+
+            .form__group
+              label.form__label(for='rating')
+                | Rating
+
+              select.form__input(
+                id='rating'
+                name='rating'
+                )
+                option(value='5') ⭐⭐⭐⭐⭐ Excellent
+                option(value='4') ⭐⭐⭐⭐ Very Good
+                option(value='3') ⭐⭐⭐ Good
+                option(value='2') ⭐⭐ Average
+                option(value='1') ⭐ Poor
+
+            .form__group
+              button.btn.btn--green
+                Submit Review  
