@@ -84,6 +84,22 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getMyReviews = catchAsync(async (req, res, next) => {
+  const reviews = await Review.find({
+    user: req.user.id,
+  }).populate({
+    path: "tour",
+    select: "name slug imageCover",
+  });
+
+  const validReviews = reviews.filter((review) => review.tour !== null);
+
+  res.status(200).render("myReviews", {
+    title: "My Reviews",
+    reviews: validReviews,
+  });
+});
+
 exports.updateUserData = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,

@@ -17,6 +17,12 @@ router.get('/my-tours', authController.protect, viewsController.getMyTours);
 
 router.get('/signup',viewsController.getSignupForm);
 
+router.get(
+  '/my-reviews',
+  authController.protect,
+  viewsController.getMyReviews
+);
+
 router.post(
   '/submit-user-data',
   authController.protect,
