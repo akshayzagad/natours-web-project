@@ -14,7 +14,7 @@ export const createReview = async (tourId,review,rating) => {
     
     
     if (res.data.status === 'success') {
-      console.log(res.data.status);
+      // console.log(res.data.status);
       showAlert('success', 'Review created successfully!');
       window.setTimeout(() => {
         window.location.reload();
