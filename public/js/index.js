@@ -4,7 +4,7 @@ import { login, logout } from "./login";
 import { signup } from "./signup";
 import { updateSettings } from "./updateSetting";
 import { bookTour } from "./Paystack";
-import {createReview} from "./review"
+import { createReview, deleteReview, editReview } from "./review";
 
 const mapBox = document.getElementById("map");
 const signupForm = document.querySelector(".form--signup");
@@ -13,6 +13,10 @@ const logOutBtn = document.querySelector(".nav__el--logout");
 const userDataForm = document.querySelector(".form-user-data");
 const userPasswordForm = document.querySelector(".form-user-password");
 const createReviewForm = document.querySelector(".form-review");
+const editReviewForm = document.querySelector(".form-edit-review");
+const editReviewModal = document.querySelector(".review-modal");
+const editReviewCloseBtn = document.querySelector(".review-modal__close");
+const editReviewOverlay = document.querySelector(".review-modal__overlay");
 
 // DELEGATION
 
@@ -103,4 +107,52 @@ if (reviewBtn)
 
     reviewSection.style.display = "block";
     reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+
+const deleteBtns = document.querySelectorAll('.delete-review');
+
+deleteBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const reviewId = btn.dataset.reviewId;
+
+    if (confirm('Are you sure you want to delete this review?')) {
+      deleteReview(reviewId);
+    }
+  });
+});
+
+const closeEditReviewModal = () => {
+  if (!editReviewModal) return;
+  editReviewModal.classList.add("hidden");
+};
+
+const editBtns = document.querySelectorAll(".edit-review");
+
+editBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (!editReviewModal || !editReviewForm) return;
+
+    editReviewForm.dataset.reviewId = btn.dataset.reviewId;
+    document.getElementById("edit-review").value = btn.dataset.review || "";
+    document.getElementById("edit-rating").value = btn.dataset.rating || "";
+    editReviewModal.classList.remove("hidden");
+  });
+});
+
+if (editReviewCloseBtn)
+  editReviewCloseBtn.addEventListener("click", closeEditReviewModal);
+
+if (editReviewOverlay)
+  editReviewOverlay.addEventListener("click", closeEditReviewModal);
+
+if (editReviewForm)
+  editReviewForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const reviewId = editReviewForm.dataset.reviewId;
+    const review = document.getElementById("edit-review").value;
+    const rating = document.getElementById("edit-rating").value;
+
+    editReview(reviewId, review, rating);
   });

@@ -1,0 +1,68 @@
+extends base
+
+block content
+  main.main
+    .ma-bt-xl
+      h1.heading-secondary My Reviews
+
+    .review-list
+      each review in reviews
+        .review-card(
+          style=`background-image: linear-gradient(
+            rgba(0,0,0,0.65),
+            rgba(0,0,0,0.65)
+          ), url('/img/tours/${review.tour.imageCover}')`
+        )
+
+          .review-card__content
+            h3.review-card__title
+              = review.tour.name
+
+            p.review-card__rating
+              | ⭐ #{review.rating}/5
+
+            p.review-card__text
+              = review.review
+
+            a.btn.btn--green(
+              href=`/tour/${review.tour.slug}`
+            )
+              View Tour
+
+          .review-card__actions
+            button.btn.btn--green.edit-review(
+              type='button'
+              data-review-id=`${review._id}`
+              data-review=`${review.review}`
+              data-rating=`${review.rating}`
+            ) Edit
+            button.btn.btn--green.delete-review(
+              data-review-id=`${review._id}`
+              type='button'
+            ) Delete
+
+    .review-modal.hidden
+      .review-modal__overlay
+      .review-modal__box
+        button.review-modal__close(type='button' aria-label='Close edit review form') &times;
+        h2.heading-secondary.ma-bt-md Edit Review
+        form.form.form-edit-review
+          .form__group
+            label.form__label(for='edit-review') Review
+            textarea.form__input(
+              id='edit-review'
+              name='review'
+              required
+            )
+          .form__group
+            label.form__label(for='edit-rating') Rating
+            input.form__input(
+              id='edit-rating'
+              name='rating'
+              type='number'
+              min='1'
+              max='5'
+              required
+            )
+          .form__group
+            button.btn.btn--green(type='submit') Save Review
