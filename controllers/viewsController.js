@@ -28,13 +28,13 @@ exports.getTour = catchAsync(async (req, res, next) => {
   }
   const currentUser = res.locals.user;
   let hasBooked = false;
-  console.log("currentUser:", currentUser);
+  // console.log("currentUser:", currentUser);
   if (currentUser) {
     const booking = await Booking.findOne({
       tour: tour._id,
       user: currentUser.id,
     });
-    console.log("Booking:", booking);
+    // console.log("Booking:", booking);
     hasBooked = !!booking;
 
     const existingReview = await Review.findOne({

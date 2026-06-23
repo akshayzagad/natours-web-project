@@ -52,8 +52,8 @@ module.exports = class Email {
   }
   async sendWelcome() {
     await this.send("welcome", "Welcome to the Natours Family!");
-    console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('FROM:', this.from);
+//     console.log('NODE_ENV:', process.env.NODE_ENV);
+// console.log('FROM:', this.from);
   }
   async sendPasswordReset() {
     await this.send(

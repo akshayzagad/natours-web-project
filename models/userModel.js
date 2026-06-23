@@ -99,12 +99,12 @@ userSchema.methods.changePasswordAfter = function (JWTTimestamp) {
         : new Date(this.passwordChangedAt).getTime()) / 1000,
       10,
     );
-    console.log(
-      "passwordChangedAt:",
-      changedTimestamp,
-      "JWT iat:",
-      JWTTimestamp,
-    );
+    // console.log(
+    //   "passwordChangedAt:",
+    //   changedTimestamp,
+    //   "JWT iat:",
+    //   JWTTimestamp,
+    // );
     return JWTTimestamp < changedTimestamp;
   }
   // Palse means not changed
@@ -119,7 +119,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  console.log({ resetToken }, this.passwordResetToken);
+  // console.log({ resetToken }, this.passwordResetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
