@@ -9,6 +9,7 @@ const sanitizeHtml = require("sanitize-html");
 const hpp = require("hpp");
 const cookieParse = require('cookie-parser')
 const compression = require('compression')
+const cors = require('cors')
 
 const AppError = require("./utils/appError");
 const tourRouter = require("./routes/toursRoutes");
@@ -20,6 +21,10 @@ const bookingRouter = require("./routes/bookingRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
+
+app.enable('trust proxy');
+
+app.use(cors());
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
