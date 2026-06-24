@@ -24,7 +24,7 @@ const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
 
-app.enable('trust proxy');
+app.set('trust proxy', 1);
 
 app.use(cors());
 // Access-Control-Allow-Origin *
