@@ -10,6 +10,7 @@ const hpp = require("hpp");
 const cookieParse = require('cookie-parser')
 const compression = require('compression')
 const cors = require('cors')
+const bodyParser = require('body-parser')
 
 const AppError = require("./utils/appError");
 const tourRouter = require("./routes/toursRoutes");
@@ -17,6 +18,7 @@ const userRouter = require("./routes/usersRoutes");
 const reviweRouter = require("./routes/reviewRoutes");
 const viewRouter = require("./routes/viewsRoutes");
 const bookingRouter = require("./routes/bookingRoutes");
+const bookingController = require("./controllers/bookingController")
 
 const globalErrorHandler = require("./controllers/errorController");
 
@@ -25,6 +27,12 @@ const app = express();
 app.enable('trust proxy');
 
 app.use(cors());
+// Access-Control-Allow-Origin *
+// api.natours.com, front-end natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
@@ -65,6 +73,12 @@ const limiter = rateLimit({
 });
 
 app.use("/api", limiter);
+
+app.post(
+  '/webhook-checkout',
+  bodyParser.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // Body parser,reading data from body into req.body
 app.use(express.json({ limit: "10kb" }));
