@@ -3,11 +3,11 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
 
-process.on("uncaughtException", (err) => {
-  console.log("Unhandle Exception Shuting down");
-  console.log(err.name,err.message);
-    process.exit(1);
-});
+// process.on("uncaughtException", (err) => {
+//   console.log("Unhandle Exception Shuting down");
+//   console.log(err.name,err.message);
+//     process.exit(1);
+// });
 
 const app = require("./app");
 
