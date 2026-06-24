@@ -3,11 +3,11 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
 
-// process.on("uncaughtException", (err) => {
-//   console.log("Unhandle Exception Shuting down");
-//   console.log(err.name,err.message);
-//     process.exit(1);
-// });
+process.on("uncaughtException", (err) => {
+  console.log("Unhandle Exception Shuting down");
+  console.log(err.name,err.message);
+    process.exit(1);
+});
 
 const app = require("./app");
 
@@ -43,22 +43,10 @@ const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
 
-// process.on("unhandledRejection", (err) => {
-//   console.log(err.name, err.message);
-//   console.log("Unhandle Rejection Shuting down");
-//   server.close(() => {
-//     process.exit(1);
-//   });
-// });
-
-process.on("uncaughtException", (err) => {
-  console.error(err.stack);
-  process.exit(1);
-});
-
-process.on('SIGTERM', () => {
-  console.log('👋 SIGTERM RECEIVED');
+process.on("unhandledRejection", (err) => {
+  console.log(err.name, err.message);
+  console.log("Unhandle Rejection Shuting down");
   server.close(() => {
-    console.log('💥 Process terminated!');
+    process.exit(1);
   });
 });
