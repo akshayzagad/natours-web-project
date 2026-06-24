@@ -165,15 +165,32 @@ app.use((req, res, next) => {
 
 // const tourRouter = express.Router();
 // const userRouter = express.Router();
+// app.use("/", viewRouter);
+
+// app.use("/api/v1/tours", tourRouter);
+
+// app.use("/api/v1/users", userRouter);
+
+// app.use("/api/v1/reviews", reviweRouter);
+
+// app.use("/api/v1/bookings", bookingRouter);
+
+console.log('before viewRouter');
 app.use("/", viewRouter);
 
+console.log('before tourRouter');
 app.use("/api/v1/tours", tourRouter);
 
+console.log('before userRouter');
 app.use("/api/v1/users", userRouter);
 
+console.log('before reviewRouter');
 app.use("/api/v1/reviews", reviweRouter);
 
+console.log('before bookingRouter');
 app.use("/api/v1/bookings", bookingRouter);
+
+console.log('all routers mounted');
 
 // userRouter.route("/").get(getAllUsers).post(createUsers);
 

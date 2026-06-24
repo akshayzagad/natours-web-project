@@ -43,13 +43,17 @@ const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
 
-process.on("unhandledRejection", (err) => {
+// process.on("unhandledRejection", (err) => {
+//   console.log(err.name, err.message);
+//   console.log("Unhandle Rejection Shuting down");
+//   server.close(() => {
+//     process.exit(1);
+//   });
+// });
+
+process.on("uncaughtException", (err) => {
   console.error(err.stack);
-  // console.log(err.name, err.message);
-  console.log("Unhandle Rejection Shuting down");
-  server.close(() => {
-    process.exit(1);
-  });
+  process.exit(1);
 });
 
 process.on('SIGTERM', () => {
