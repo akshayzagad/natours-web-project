@@ -1,5 +1,5 @@
 const axios = require("axios");
-const paystack = require("@paystack/paystack-sdk");
+// const paystack = require("@paystack/paystack-sdk");
 const crypto = require('crypto');
 const Tour = require("../models/tourModel");
 const User = require("../models/userModel");
@@ -85,3 +85,5 @@ exports.webhookCheckout = async (req, res) => {
     status: 'success'
   });
 };
+
+console.log('webhookCheckout type:', typeof exports.webhookCheckout);
