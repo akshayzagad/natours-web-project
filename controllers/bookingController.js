@@ -63,6 +63,7 @@ exports.webhookCheckout = async (req, res) => {
   console.log('Webhook hit!');
 
   console.log(req.body);
+  const event = JSON.parse(req.body.toString());
   console.log(event);
   res.status(200).json({
     status: 'success'
