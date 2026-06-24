@@ -44,50 +44,76 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 exports.webhookCheckout = async (req, res) => {
-  console.log("Webhook hit!");
+  try {
+    console.log("================================");
+    console.log("WEBHOOK HIT");
+    console.log(new Date());
+    console.log("================================");
 
-  // 1. Verify Paystack Signature
-  const hash = crypto
-    .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
-    .update(req.body)
-    .digest("hex");
+    // Verify signature
+    const hash = crypto
+      .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
+      .update(req.body)
+      .digest("hex");
 
-  if (hash !== req.headers["x-paystack-signature"]) {
-    return res.status(400).send("Invalid signature");
-  }
+    console.log("Signature received:", req.headers["x-paystack-signature"]);
+    console.log("Signature generated:", hash);
 
-  // 2. Parse Event
-  const event = JSON.parse(req.body.toString());
+    if (hash !== req.headers["x-paystack-signature"]) {
+      console.log("❌ Invalid signature");
+      return res.status(400).send("Invalid signature");
+    }
 
-  console.log(event.data.metadata);
+    console.log("✅ Signature verified");
 
-  // 3. Process Successful Payment
-  if (event.event === "charge.success") {
-    const metadata = event.data.metadata;
+    // Parse event
+    const event = JSON.parse(req.body.toString());
 
-    const existingBooking = await Booking.findOne({
-      tour: metadata.tourId,
-      user: metadata.userId,
-    });
+    console.log("Event type:", event.event);
+    console.log("Metadata:", event.data.metadata);
 
-    if (!existingBooking) {
-      await Booking.create({
+    if (event.event === "charge.success") {
+      const metadata = event.data.metadata;
+
+      console.log("Searching for existing booking...");
+
+      const existingBooking = await Booking.findOne({
         tour: metadata.tourId,
         user: metadata.userId,
-        price: event.data.amount / 100,
       });
 
-      console.log("Booking created");
-      console.log("================================");
-      console.log("WEBHOOK RECEIVED");
-      console.log(new Date());
-      console.log("================================");
-    }
-  }
+      console.log("Existing booking:", existingBooking);
 
-  res.status(200).json({
-    status: "success",
-  });
+      if (!existingBooking) {
+        console.log("Creating new booking...");
+
+        const booking = await Booking.create({
+          tour: metadata.tourId,
+          user: metadata.userId,
+          price: event.data.amount / 100,
+        });
+
+        console.log("✅ Booking created");
+        console.log(booking);
+      } else {
+        console.log("⚠️ Booking already exists");
+      }
+    }
+
+    console.log("Webhook processing completed");
+
+    res.status(200).json({
+      status: "success",
+    });
+  } catch (err) {
+    console.error("❌ WEBHOOK ERROR");
+    console.error(err);
+
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 };
 
 console.log("webhookCheckout type:", typeof exports.webhookCheckout);
