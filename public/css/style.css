@@ -551,6 +551,16 @@ body {
   width: 100%;
 }
 
+.leaflet-control-zoom {
+  margin: 1.5rem;
+  border: none;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-control-zoom a {
+  color: #28b487;
+}
+
 .marker {
   background-image: url("../img/pin.png");
   background-size: cover;
@@ -2100,8 +2110,7 @@ body {
   .header {
     overflow: visible;
     grid-template-columns: auto 1fr auto;
-    grid-template-areas:
-      "logo tours menu";
+    grid-template-areas: "logo tours menu";
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
@@ -2238,8 +2247,7 @@ body {
 @media only screen and (max-width: 30em) {
   .header {
     grid-template-columns: auto 1fr auto;
-    grid-template-areas:
-      "logo tours menu";
+    grid-template-areas: "logo tours menu";
     text-align: center;
   }
 
@@ -2252,8 +2260,16 @@ body {
 /* Header and card redesign */
 .main {
   background:
-    radial-gradient(circle at 12% 8%, rgba(85, 197, 122, 0.08), transparent 26rem),
-    radial-gradient(circle at 92% 12%, rgba(40, 180, 135, 0.07), transparent 28rem),
+    radial-gradient(
+      circle at 12% 8%,
+      rgba(85, 197, 122, 0.08),
+      transparent 26rem
+    ),
+    radial-gradient(
+      circle at 92% 12%,
+      rgba(40, 180, 135, 0.07),
+      transparent 28rem
+    ),
     #f5f7f6;
 }
 
@@ -2284,7 +2300,12 @@ body {
 .overview-hero__media::after {
   content: "";
   background:
-    linear-gradient(90deg, rgba(18, 27, 24, 0.88), rgba(18, 27, 24, 0.56) 42%, rgba(18, 27, 24, 0.18)),
+    linear-gradient(
+      90deg,
+      rgba(18, 27, 24, 0.88),
+      rgba(18, 27, 24, 0.56) 42%,
+      rgba(18, 27, 24, 0.18)
+    ),
     linear-gradient(0deg, rgba(18, 27, 24, 0.55), transparent 52%);
 }
 
@@ -2367,8 +2388,18 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(85, 197, 122, 0.14), transparent 28%, transparent 72%, rgba(40, 180, 135, 0.14)),
-    radial-gradient(circle at 50% -120%, rgba(255, 255, 255, 0.18), transparent 36rem);
+    linear-gradient(
+      90deg,
+      rgba(85, 197, 122, 0.14),
+      transparent 28%,
+      transparent 72%,
+      rgba(40, 180, 135, 0.14)
+    ),
+    radial-gradient(
+      circle at 50% -120%,
+      rgba(255, 255, 255, 0.18),
+      transparent 36rem
+    );
   pointer-events: none;
 }
 
@@ -2457,7 +2488,11 @@ body {
 }
 
 .card__picture-overlay {
-  background-image: linear-gradient(135deg, rgba(85, 197, 122, 0.54), rgba(40, 180, 135, 0.24));
+  background-image: linear-gradient(
+    135deg,
+    rgba(85, 197, 122, 0.54),
+    rgba(40, 180, 135, 0.24)
+  );
   opacity: 1;
   z-index: 1;
 }
@@ -2514,7 +2549,11 @@ body {
 .heading-tertirary span {
   padding: 0.65rem 1rem;
   line-height: 1.18;
-  background-image: linear-gradient(135deg, rgba(27, 33, 31, 0.9), rgba(40, 180, 135, 0.82));
+  background-image: linear-gradient(
+    135deg,
+    rgba(27, 33, 31, 0.9),
+    rgba(40, 180, 135, 0.82)
+  );
 }
 
 .card__details {
