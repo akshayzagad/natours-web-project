@@ -1,25 +1,28 @@
 /* eslint-disable */
-const displayMap = locations => {
+const displayMap = (locations) => {
   if (!window.L || !locations || locations.length === 0) return;
 
-  const map = L.map('map', {
-    scrollWheelZoom: false
+  const map = L.map("map", {
+    scrollWheelZoom: false,
+    zoomControl: false,
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.control.zoom({ position: "topright" }).addTo(map);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
   const points = [];
   const markerIcon = L.icon({
-    iconUrl: '/img/pin.png',
+    iconUrl: "/img/pin.png",
     iconSize: [32, 40],
     iconAnchor: [16, 40],
-    popupAnchor: [0, -36]
+    popupAnchor: [0, -36],
   });
 
-  locations.forEach(loc => {
+  locations.forEach((loc) => {
     const [lng, lat] = loc.coordinates;
     const point = [lat, lng];
 
@@ -28,7 +31,7 @@ const displayMap = locations => {
       .addTo(map)
       .bindPopup(`<p>Day ${loc.day}: ${loc.description}</p>`, {
         autoClose: false,
-        closeOnClick: false
+        closeOnClick: false,
       })
       .openPopup();
 
@@ -38,8 +41,6 @@ const displayMap = locations => {
   map.fitBounds(L.latLngBounds(points), {
     paddingTopLeft: [100, 200],
     paddingBottomRight: [100, 150],
-    animate: false
+    animate: false,
   });
 };
-
-
