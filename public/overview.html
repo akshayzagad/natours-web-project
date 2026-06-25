@@ -48,7 +48,31 @@
 
     <!-- In video, this <main> element is wrongly called: <section class="overview">. So in pug template, please use main.main instead of section.overview -->
     <main class="main">
-      <div class="card-container">
+      <section
+        class="overview-hero"
+        data-hero-images="/img/tours/tour-5-cover.jpg,/img/tours/tour-1-cover.jpg,/img/tours/tour-2-cover.jpg,/img/tours/tour-8-cover.jpg"
+      >
+        <div class="overview-hero__media">
+          <img
+            class="overview-hero__img"
+            src="/img/tours/tour-5-cover.jpg"
+            alt="Mountain adventure tour"
+          />
+        </div>
+        <div class="overview-hero__content">
+          <p class="overview-hero__eyebrow">Explore the wild</p>
+          <h1 class="overview-hero__title">Natours</h1>
+          <p class="overview-hero__text">
+            Discover guided adventures through mountains, forests, deserts, and
+            coastlines.
+          </p>
+          <a class="btn btn--green overview-hero__btn" href="#tours"
+            >View tours</a
+          >
+        </div>
+      </section>
+
+      <div class="card-container" id="tours">
         <div class="card">
           <div class="card__header">
             <div class="card__picture">

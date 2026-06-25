@@ -11,6 +11,8 @@ const mapBox = document.getElementById("map");
 const signupForm = document.querySelector(".form--signup");
 const loginForm = document.querySelector(".form--login");
 const logOutBtn = document.querySelector(".nav__el--logout");
+const navMenuBtn = document.querySelector(".nav__menu-btn");
+const userNav = document.querySelector(".nav--user");
 const userDataForm = document.querySelector(".form-user-data");
 const userPasswordForm = document.querySelector(".form-user-password");
 const createReviewForm = document.querySelector(".form-review");
@@ -18,8 +20,46 @@ const editReviewForm = document.querySelector(".form-edit-review");
 const editReviewModal = document.querySelector(".review-modal");
 const editReviewCloseBtn = document.querySelector(".review-modal__close");
 const editReviewOverlay = document.querySelector(".review-modal__overlay");
+const overviewHero = document.querySelector(".overview-hero");
+
+const startHeroSlideshow = (hero) => {
+  const image = hero.querySelector(".overview-hero__img");
+  const images = (hero.dataset.heroImages || "")
+    .split(",")
+    .map((src) => src.trim())
+    .filter(Boolean);
+
+  if (!image || images.length < 2) return;
+
+  let currentIndex = images.indexOf(image.getAttribute("src"));
+  if (currentIndex < 0) currentIndex = 0;
+
+  images.forEach((src) => {
+    const preload = new Image();
+    preload.src = src;
+  });
+
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % images.length;
+    image.classList.add("is-changing");
+
+    setTimeout(() => {
+      image.src = images[currentIndex];
+      image.classList.remove("is-changing");
+    }, 450);
+  }, 5000);
+};
 
 // DELEGATION
+
+if (overviewHero) startHeroSlideshow(overviewHero);
+
+if (navMenuBtn && userNav)
+  navMenuBtn.addEventListener("click", () => {
+    const isOpen = userNav.classList.toggle("nav--user-open");
+    navMenuBtn.classList.toggle("nav__menu-btn--active", isOpen);
+    navMenuBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
 
 if (mapBox) {
   const locations = JSON.parse(
