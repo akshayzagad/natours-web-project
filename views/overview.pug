@@ -2,7 +2,16 @@ extends base
 
 block content
   main.main
-    .card-container
+    section.overview-hero(data-hero-images='/img/tours/tour-5-cover.jpg,/img/tours/tour-1-cover.jpg,/img/tours/tour-2-cover.jpg,/img/tours/tour-8-cover.jpg')
+      .overview-hero__media
+        img.overview-hero__img(src='/img/tours/tour-5-cover.jpg', alt='Mountain adventure tour')
+      .overview-hero__content
+        p.overview-hero__eyebrow Explore the wild
+        h1.overview-hero__title Natours
+        p.overview-hero__text Discover guided adventures through mountains, forests, deserts, and coastlines.
+        a.btn.btn--green.overview-hero__btn(href='#tours') View tours
+
+    .card-container#tours
     
       each tour in tours
         .card
@@ -10,6 +19,9 @@ block content
             .card__picture
               .card__picture-overlay &nbsp;
               img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+            .card__badges
+              span.card__badge= tour.difficulty
+              span.card__badge= `${tour.duration} days`
             h3.heading-tertirary
               span= tour.name
 
