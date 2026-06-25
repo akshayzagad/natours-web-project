@@ -5,6 +5,7 @@ import { signup } from "./signup";
 import { updateSettings } from "./updateSetting";
 import { bookTour } from "./Paystack";
 import { createReview, deleteReview, editReview } from "./review";
+import { showAlert } from "./alert";
 
 const mapBox = document.getElementById("map");
 const signupForm = document.querySelector(".form--signup");
@@ -33,7 +34,7 @@ if (createReviewForm)
     const review = document.getElementById("review").value;
     const rating = document.getElementById("rating").value;
     const tourId = createReviewForm.dataset.tourId;
-    createReview(tourId,review,rating);
+    createReview(tourId, review, rating);
   });
 
 if (signupForm)
@@ -109,14 +110,13 @@ if (reviewBtn)
     reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
+const deleteBtns = document.querySelectorAll(".delete-review");
 
-const deleteBtns = document.querySelectorAll('.delete-review');
-
-deleteBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
+deleteBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
     const reviewId = btn.dataset.reviewId;
 
-    if (confirm('Are you sure you want to delete this review?')) {
+    if (confirm("Are you sure you want to delete this review?")) {
       deleteReview(reviewId);
     }
   });
@@ -156,3 +156,6 @@ if (editReviewForm)
 
     editReview(reviewId, review, rating);
   });
+
+const alertMessage = document.querySelector("body").dataset.alert;
+if (alertMessage) showAlert("success", alertMessage, 20);
