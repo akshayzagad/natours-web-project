@@ -26,7 +26,31 @@ const app = express();
 
 app.set('trust proxy', 1);
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  // "https://natours-web-project.vercel.app", // example if using Vercel etc.
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (like curl/postman/mobile apps)
+      if (!origin) return callback(null, true);
+
+      const isLocalhost = /^http:\/\/localhost:\d+$/.test(origin);
+      const isAllowed = allowedOrigins.includes(origin);
+
+      if (isLocalhost || isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// app.use(cors());
 // Access-Control-Allow-Origin *
 // api.natours.com, front-end natours.com
 // app.use(cors({
