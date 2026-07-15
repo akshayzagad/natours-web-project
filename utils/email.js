@@ -53,7 +53,11 @@ module.exports = class Email {
 
   console.log("Sending mail...");
 
+  try {
   await transporter.sendMail(mailOptions);
+  } catch (error) {
+     console.error(err);
+  }
 
   console.log("Mail sent successfully");
 }
