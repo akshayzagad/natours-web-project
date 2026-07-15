@@ -30,6 +30,7 @@ module.exports = class Email {
     });
   }
   //send actual email
+  
   async send(template, subject) {
   console.log("NODE_ENV:", process.env.NODE_ENV);
 
@@ -56,7 +57,7 @@ module.exports = class Email {
   try {
   await transporter.sendMail(mailOptions);
   } catch (error) {
-     console.error(err);
+     console.error(error);
   }
 
   console.log("Mail sent successfully");
