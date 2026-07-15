@@ -31,25 +31,33 @@ module.exports = class Email {
   }
   //send actual email
   async send(template, subject) {
-    //Render html based on pug template
+  console.log("NODE_ENV:", process.env.NODE_ENV);
 
-    const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
-      firstName: this.firstName,
-      url: this.url,
-      subject,
-    });
+  const transporter = this.newTransporter();
 
-    //Define email options
-    const mailOptions = {
-      from: this.from,
-      to: this.to,
-      subject,
-      html,
-      text: htmlToText.convert(html),
-    };
-    //create transport and create email
-    await this.newTransporter().sendMail(mailOptions);
-  }
+  console.log("Transporter created");
+
+  const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
+    firstName: this.firstName,
+    url: this.url,
+    subject,
+  });
+
+  const mailOptions = {
+    from: this.from,
+    to: this.to,
+    subject,
+    html,
+    text: htmlToText.convert(html),
+  };
+
+  console.log("Sending mail...");
+
+  await transporter.sendMail(mailOptions);
+
+  console.log("Mail sent successfully");
+}
+
   async sendWelcome() {
     await this.send("welcome", "Welcome to the Natours Family!");
 //     console.log('NODE_ENV:', process.env.NODE_ENV);
