@@ -8,27 +8,30 @@ module.exports = class Email {
     this.url = url;
     this.from = `Akshay Zagade <${process.env.EMAIL_FROM}>`;
   }
-  newTransporter() {
-    if (process.env.NODE_ENV === "production") {
-      // Sendgrid
-      return nodemailer.createTransport({
-        service: "SendGrid",
-        auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
-        },
-      });
-    }
+ newTransporter() {
+  if (process.env.NODE_ENV === "production") {
     return nodemailer.createTransport({
-      // service:'Gmail',
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
+      host: "smtp.sendgrid.net",
+      port: 587,
+      secure: false, // uses STARTTLS on 587
       auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
+        user: "apikey", // literally the string "apikey" — SendGrid convention
+        pass: process.env.SENDGRID_PASSWORD, // your actual SendGrid API key
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
   }
+  return nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+}
   //send actual email
   
   async send(template, subject) {
