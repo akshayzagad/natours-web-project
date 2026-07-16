@@ -49,7 +49,9 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
   });
 
-  const url = `${req.protocol}://${req.get("host")}/me`;
+  // const url = `${req.protocol}://${req.get("host")}/me`;
+  // points to your React "welcome"/profile page instead of backend /me
+  const url = `${process.env.FRONTEND_URL}/me`;
   // fire-and-forget — don't block the response on email delivery
   new Email(newUser, url).sendWelcome().catch((err) => {
     console.error("Welcome email failed:", err.message);
@@ -198,7 +200,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     //   subject: `Your password reset token (valid for only 10 seconds)`,
     //   message,
     // });
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
+    // const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
+     // points to your React route, not the backend API
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     await new Email(user, resetUrl).sendPasswordReset();
 
