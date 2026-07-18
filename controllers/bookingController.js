@@ -21,7 +21,9 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
       // Paystack expects smallest currency unit
       amount: tour.price * 100,
 
-      callback_url: `${req.protocol}://${req.get("host")}/my-tours?alert=booking`,
+      // callback_url: `${req.protocol}://${req.get("host")}/my-tours?alert=booking`,
+
+      callback_url: `${process.env.FRONTEND_URL}/my-tours?alert=booking`,
 
       metadata: {
         tourId: tour.id,
