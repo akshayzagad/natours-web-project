@@ -23,7 +23,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
       // callback_url: `${req.protocol}://${req.get("host")}/my-tours?alert=booking`,
 
-      callback_url: `${process.env.FRONTEND_URL}/tourDetail?alert=booking`,
+      callback_url: `${process.env.FRONTEND_URL}/tourDetail/${tour._id}?alert=booking`,
 
       metadata: {
         tourId: tour.id,
