@@ -97,7 +97,36 @@ exports.aliasTopTour = (req, res, next) => {
 
 exports.getAllTours = factory.getAll(Tour);
 
-exports.getTour = factory.getOne(Tour, { path: "reviews" });
+// exports.getTour = factory.getOne(Tour, { path: "reviews" });
+
+exports.getTour = catchAsync(async (req, res, next) => {
+  const doc = await Tour.findById(req.params.id).populate({
+    path: "reviews",
+  });
+
+  if (!doc) {
+    return next(new AppError("No document found with that ID", 404));
+  }
+
+  let hasBooked = false;
+
+  if (req.user) {
+    const booking = await Booking.findOne({
+      tour: req.params.id,
+      user: req.user.id,
+    });
+
+    hasBooked = !!booking;
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      doc,
+      hasBooked,
+    },
+  });
+});
 
 exports.createTour = factory.createOne(Tour);
 
