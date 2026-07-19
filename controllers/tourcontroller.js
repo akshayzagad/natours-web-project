@@ -7,6 +7,7 @@ const APIFeatures = require("../utils/apiFeatures");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("../utils/appError");
 const factory = require("./handlerFactory");
+const Booking = require("../models/bookingModel");
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../../dev-data/data/tours-simple.json`),
 // );
