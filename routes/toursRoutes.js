@@ -53,7 +53,7 @@ router
 
 router
   .route("/:id")
-  .get(tourController.getTour)
+  .get(authcontroller.isLoggedIn,tourController.getTour)
   .patch(
     authcontroller.protect,
     authcontroller.restrictTo("admin", "lead-guide"),

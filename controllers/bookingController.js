@@ -23,7 +23,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
       // callback_url: `${req.protocol}://${req.get("host")}/my-tours?alert=booking`,
 
-      callback_url: `${process.env.FRONTEND_URL}/my-tours?alert=booking`,
+      callback_url: `${process.env.FRONTEND_URL}/tourDetail/${tour._id}?alert=booking`,
 
       metadata: {
         tourId: tour.id,
@@ -92,3 +92,15 @@ exports.webhookCheckout = async (req, res) => {
 };
 
 console.log("webhookCheckout type:", typeof exports.webhookCheckout);
+
+exports.getMyBookedTours = catchAsync(async (req, res, next) => {
+  const bookings = await Booking.find({ user: req.user.id }).populate("tour");
+  const tours = bookings.map((booking) => booking.tour);
+   res.status(200).json({
+    status: "success",
+    results: tours.length,
+    data: {
+      tours,
+    },
+  });
+});

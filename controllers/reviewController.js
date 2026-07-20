@@ -37,3 +37,25 @@ exports.createReview = factory.createOne(Review);
 exports.updateReview = factory.updateOne(Review);
 
 exports.deleteReview = factory.deleteOne(Review);
+
+exports.getMyReviews = catchAsync(async (req, res, next) => {
+  console.log("✅ getMyReviews called");
+  const reviews = await Review.find({
+    user: req.user.id,
+  }).populate({
+    path: "tour",
+    select: "name slug imageCover",
+  });
+
+  const validReviews = reviews.filter(
+    (review) => review.tour !== null
+  );
+
+  res.status(200).json({
+    status: "success",
+    results: validReviews.length,
+    data: {
+      reviews: validReviews,
+    },
+  });
+});
