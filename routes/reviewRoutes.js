@@ -7,6 +7,11 @@ const router = express.Router({ mergeParams: true });
 
 router.use(authController.protect);
 
+router.get(
+  "/my-reviews",
+  reviewController.getMyReviews,
+);
+
 router
   .route("/")
   .get(reviewController.getAllReviews)
@@ -16,6 +21,8 @@ router
     reviewController.setTourUserIds,
     reviewController.createReview,
   );
+
+
 
 router
   .route("/:id")
