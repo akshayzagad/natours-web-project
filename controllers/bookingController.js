@@ -102,9 +102,20 @@ exports.getMyBookedTours = catchAsync(async (req, res, next) => {
   const tourIDs = bookings.map((booking) => booking.tour);
 
   // 3. Fetch the full tour documents
-  const tours = await Tour.find({
-    _id: { $in: tourIDs },
-  });
+  const filter = {
+  _id: { $in: tourIDs }
+};
+
+const features = new APIFeatures(
+  Tour.find(filter),
+  req.query
+)
+  .filter()
+  .sort()
+  .limitFields()
+  .pagination();
+
+const tours = await features.query;
 
   res.status(200).json({
     status: "success",
