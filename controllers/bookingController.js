@@ -93,10 +93,20 @@ exports.webhookCheckout = async (req, res) => {
 
 console.log("webhookCheckout type:", typeof exports.webhookCheckout);
 
+
 exports.getMyBookedTours = catchAsync(async (req, res, next) => {
-  const bookings = await Booking.find({ user: req.user.id }).populate("tour");
-  const tours = bookings.map((booking) => booking.tour);
-   res.status(200).json({
+  // 1. Find bookings for the current user
+  const bookings = await Booking.find({ user: req.user.id });
+
+  // 2. Extract the booked tour IDs
+  const tourIDs = bookings.map((booking) => booking.tour);
+
+  // 3. Fetch the full tour documents
+  const tours = await Tour.find({
+    _id: { $in: tourIDs },
+  });
+
+  res.status(200).json({
     status: "success",
     results: tours.length,
     data: {
