@@ -7,6 +7,7 @@ const Booking = require("../models/bookingModel");
 // const Booking = require('../models/bookingModel');
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./handlerFactory");
+const APIFeatures = require("../utils/apiFeatures");
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   // 1) Get tour
@@ -93,10 +94,31 @@ exports.webhookCheckout = async (req, res) => {
 
 console.log("webhookCheckout type:", typeof exports.webhookCheckout);
 
+
 exports.getMyBookedTours = catchAsync(async (req, res, next) => {
-  const bookings = await Booking.find({ user: req.user.id }).populate("tour");
-  const tours = bookings.map((booking) => booking.tour);
-   res.status(200).json({
+  // 1. Find bookings for the current user
+  const bookings = await Booking.find({ user: req.user.id });
+
+  // 2. Extract the booked tour IDs
+  const tourIDs = bookings.map((booking) => booking.tour);
+
+  // 3. Fetch the full tour documents
+  const filter = {
+  _id: { $in: tourIDs }
+};
+
+const features = new APIFeatures(
+  Tour.find(filter),
+  req.query
+)
+  .filter()
+  .sort()
+  .limitFields()
+  .pagination();
+
+const tours = await features.query;
+
+  res.status(200).json({
     status: "success",
     results: tours.length,
     data: {
