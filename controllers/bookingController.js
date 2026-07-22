@@ -7,6 +7,7 @@ const Booking = require("../models/bookingModel");
 // const Booking = require('../models/bookingModel');
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./handlerFactory");
+const APIFeatures = require("../utils/apiFeatures");
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   // 1) Get tour
