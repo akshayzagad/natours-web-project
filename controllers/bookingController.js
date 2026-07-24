@@ -106,7 +106,7 @@ exports.getMyBookedTours = catchAsync(async (req, res, next) => {
   const filter = {
   _id: { $in: tourIDs }
 };
-
+const totalResults = await Tour.countDocuments(filter);
 const features = new APIFeatures(
   Tour.find(filter),
   req.query
@@ -120,7 +120,7 @@ const tours = await features.query;
 
   res.status(200).json({
     status: "success",
-    results: tours.length,
+    results: totalResults,
     data: {
       tours,
     },
